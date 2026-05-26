@@ -8,6 +8,7 @@ import {
   index,
   primaryKey,
 } from "drizzle-orm/pg-core";
+import { users } from "./auth-schema";
 
 // Enums
 
@@ -29,14 +30,6 @@ export const taskPriorityEnum = pgEnum("task_priority", [
   "high",
 ]);
 
-// Users table
-
-export const users = pgTable("users", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
 
 // Project table
 
@@ -48,7 +41,9 @@ export const projects = pgTable(
     description: text("description").notNull(),
     ownerId: uuid("owner_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" })
+
+      ,
     status: projectStatusEnum("status").notNull().default("active"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -95,7 +90,8 @@ export const comments = pgTable(
       .references(() => tasks.id, { onDelete: "cascade" }),
     authorId: uuid("author_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" })
+      ,
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => ({
@@ -139,7 +135,8 @@ export const taskAssignees = pgTable(
       .references(() => tasks.id, { onDelete: "cascade" }),
     userId: uuid("user_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" })
+      ,
     assignedAt: timestamp("assigned_at").defaultNow().notNull(),
   },
   (table) => ({

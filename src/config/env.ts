@@ -8,5 +8,7 @@ const evnSchema = z.object({
   PORT: z.string().transform(Number).default(3000),
   HOST: z.string().default("0.0.0.0"),
   DATABASE_URL: z.string().url(),
+  BETTER_AUTH_SECRET:z.string(),
+  BETTER_AUTH_URL:z.string().url()
 });
 export const env = evnSchema.parse(process.env);

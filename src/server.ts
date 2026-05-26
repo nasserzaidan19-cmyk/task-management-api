@@ -73,7 +73,12 @@ fastify.get("/health", async () => {
 
 const start = async () => {
   try {
-    await fastify.register(cors);
+    await fastify.register(cors, {
+      origin: "http://localhost:5173",
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+      credentials: true,
+      allowedHeaders: ["Content-Type", "Authorization"],
+    });
     await fastify.register(helmet);
 
     await fastify.listen({ port: env.PORT, host: env.HOST });
