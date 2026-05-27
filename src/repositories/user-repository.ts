@@ -1,5 +1,6 @@
 import { eq, sql } from "drizzle-orm";
-import { db, users } from "../db";
+import { db } from "../db";
+import { user } from "../db/schema/index";
 import { CreateUserDto, QueryPrams, UpdateUserDto, User } from "../types";
 
 /*
@@ -14,18 +15,21 @@ export class UserRepository extends InMemoryRepository<User, CreateUserDto, Upda
 
 export class UserRepository {
   async create(data: CreateUserDto): Promise<User> {
-    const [user] = await db.insert(users).values(data).returning();
-    return user;
+    const [userData] = await db.insert(user).values(data).returning();
+    return userData;
   }
 
   async findById(id: string): Promise<User | null> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user ?? null;
+    const [userData] = await db.select().from(user).where(eq(user.id, id));
+    return userData ?? null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user ?? null;
+    const [userData] = await db
+      .select()
+      .from(user)
+      .where(eq(user.email, email));
+    return userData ?? null;
   }
 
   async findAll(
@@ -38,27 +42,27 @@ export class UserRepository {
 
     const paginatedUsers = await db
       .select()
-      .from(users)
+      .from(user)
       .limit(limit)
       .offset(offset)
-      .orderBy(users.createdAt);
+      .orderBy(user.createdAt);
 
-    const [totalCount] = await db.select({ count: sql`count(*)` }).from(users);
+    const [totalCount] = await db.select({ count: sql`count(*)` }).from(user);
 
     return { paginatedUsers, total: Number(totalCount.count) };
   }
 
   async update(id: string, data: UpdateUserDto): Promise<User> {
-    const [user] = await db
-      .update(users)
+    const [userData] = await db
+      .update(user)
       .set(data)
-      .where(eq(users.id, id))
+      .where(eq(user.id, id))
       .returning();
-    return user;
+    return userData;
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await db.delete(users).where(eq(users.id, id));
+    const result = await db.delete(user).where(eq(user.id, id));
     return result.count > 0;
   }
 }

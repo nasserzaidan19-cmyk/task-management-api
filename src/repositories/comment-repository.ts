@@ -1,5 +1,7 @@
 import { eq, sql } from "drizzle-orm";
-import { comments, db } from "../db";
+import {  db } from "../db";
+import {comments} from "../db/schema/schema"
+
 import {
   Comment,
   CreateCommentDto,

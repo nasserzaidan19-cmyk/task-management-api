@@ -1,6 +1,9 @@
 import { and, eq } from "drizzle-orm";
-import { db, taskAssignees, users } from "../db";
-import { JunctionTableRepository } from "./base-repository";
+import { db } from "../db";
+import {user} from "../db/schema/auth-schema"
+import {taskAssignees} from "../db/schema/schema"
+
+
 import { ConflictError } from "../utils/errors";
 
 export class TaskAssigneeRepository {
@@ -26,9 +29,9 @@ export class TaskAssigneeRepository {
     taskId: string,
   ): Promise<{ id: string; name: string; userEmail: string }[]> {
     const result = await db
-      .select({ id: users.id, name: users.name, userEmail: users.email })
+      .select({ id: user.id, name: user.name, userEmail: user.email })
       .from(taskAssignees)
-      .innerJoin(users, eq(taskAssignees.userId, users.id))
+      .innerJoin(user, eq(taskAssignees.userId, user.id))
       .where(eq(taskAssignees.taskId, taskId));
 
     return result;

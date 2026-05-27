@@ -1,5 +1,7 @@
 import { and, eq, SQL, sql } from "drizzle-orm";
-import { db, projects, projectTags, tags, tasks } from "../db";
+import { db } from "../db";
+import { projects, projectTags, tags, tasks} from "../db/schema/schema"
+
 import {
   CreateProjectDto,
   Project,

@@ -13,12 +13,6 @@ export async function userRoutes(
 ) {
   const userService = opts.sharedUserService;
 
-  fastify.post("/users", async (request, reply) => {
-    const validateData = createUserSchema.parse(request.body);
-    const user = await userService.create(validateData);
-    return reply.status(201).send(user);
-  });
-
   fastify.get("/users", async (request) => {
     const validatedQuery = paginationQuerySchema.parse(request.query);
     const result = await userService.findAll(validatedQuery);

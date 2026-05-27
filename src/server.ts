@@ -2,6 +2,8 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import { env } from "./config/env";
+import { auth } from "./lib/auth";
+import { fromNodeHeaders } from "better-auth/node";
 import { errorHandler } from "./utils/error-handler";
 import { userRoutes } from "./routes/user-routes";
 import { projectRoutes } from "./routes/project-routes";
@@ -71,10 +73,43 @@ fastify.get("/health", async () => {
   };
 });
 
+fastify.route({
+  method: ["GET", "POST"],
+  url: "/api/auth/*",
+  async handler(request, reply) {
+    try {
+      // Reconstruct the standard Fetch Web Request URL that Better Auth expects
+      const url = new URL(request.url, `http://${request.headers.host}`);
+
+      // Convert standard Node/Fastify headers to Fetch API-compatible headers
+      const headers = fromNodeHeaders(request.headers);
+
+      // Build a standard Request object
+      const webReq = new Request(url.toString(), {
+        method: request.method,
+        headers,
+        ...(request.body ? { body: JSON.stringify(request.body) } : {}),
+      });
+
+      // Pass the request to Better Auth to process database queries or cookie issuance
+      const response = await auth.handler(webReq);
+
+      // Forward Better Auth's response back to the client browser
+      reply.status(response.status);
+      response.headers.forEach((value, key) => reply.header(key, value));
+
+      return reply.send(response.body ? await response.text() : null);
+    } catch (error) {
+      fastify.log.error("Authentication Handler Error:", error as any);
+      return reply.status(500).send({ error: "Internal authentication error" });
+    }
+  },
+});
+
 const start = async () => {
   try {
     await fastify.register(cors, {
-      origin: "http://localhost:5173",
+      origin: env.BETTER_AUTH_URL,
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
       credentials: true,
       allowedHeaders: ["Content-Type", "Authorization"],

@@ -8,7 +8,7 @@ import {
   index,
   primaryKey,
 } from "drizzle-orm/pg-core";
-import { users } from "./auth-schema";
+import { user } from "./auth-schema";
 
 // Enums
 
@@ -41,7 +41,7 @@ export const projects = pgTable(
     description: text("description").notNull(),
     ownerId: uuid("owner_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" })
+      .references(() => user.id, { onDelete: "cascade" })
 
       ,
     status: projectStatusEnum("status").notNull().default("active"),
@@ -90,7 +90,7 @@ export const comments = pgTable(
       .references(() => tasks.id, { onDelete: "cascade" }),
     authorId: uuid("author_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" })
+      .references(() => user.id, { onDelete: "cascade" })
       ,
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
@@ -135,7 +135,7 @@ export const taskAssignees = pgTable(
       .references(() => tasks.id, { onDelete: "cascade" }),
     userId: uuid("user_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" })
+      .references(() => user.id, { onDelete: "cascade" })
       ,
     assignedAt: timestamp("assigned_at").defaultNow().notNull(),
   },

@@ -1,5 +1,7 @@
 import { and, desc, eq, SQL, sql } from "drizzle-orm";
-import { comments, db, taskAssignees, tasks } from "../db";
+import { db } from "../db";
+import {comments, taskAssignees, tasks} from "../db/schema/schema"
+
 import {
   CreateTaskDto,
   Task,
@@ -8,7 +10,6 @@ import {
   TaskPriority,
   TaskStatus,
 } from "../types";
-import { InMemoryRepository } from "./base-repository";
 
 // export class TaskRepository extends InMemoryRepository<
 //   Task,

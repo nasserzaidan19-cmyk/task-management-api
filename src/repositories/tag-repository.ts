@@ -1,6 +1,8 @@
 import { InMemoryRepository } from "./base-repository";
 import { CreateTagDto, QueryPrams, Tag, UpdateTagDto } from "../types";
-import { db, tags } from "../db";
+import { db } from "../db";
+import {tags} from "../db/schema/schema"
+
 import { eq, sql } from "drizzle-orm";
 
 // export class TagRepository extends InMemoryRepository<
