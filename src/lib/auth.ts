@@ -6,7 +6,7 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg", // or "mysql", "sqlite"
   }),
-  baseURL: env.BETTER_AUTH_URL,
+  baseURL: env.API_URL,
   advanced: {
     database: {
       generateId: "uuid",
@@ -30,6 +30,16 @@ export const auth = betterAuth({
       console.log(`Click this clean frontend link to test:`);
       console.log(frontendResetUrl);
       console.log(`=========================================`);
+    },
+  },
+  socialProviders: {
+    github: {
+      clientId: env.GITHUB_CLIENT_ID as string,
+      clientSecret: env.clientSecret as string,
+    },
+    google: {
+      clientId: env.GOOGLE_CLIENT_ID as string,
+      clientSecret: env.GOOGLE_CLIENT_SECRET as string,
     },
   },
   trustedOrigins: [env.BETTER_AUTH_URL],
